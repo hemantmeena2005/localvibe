@@ -22,6 +22,9 @@ app.use('/api/auth', authRoutes);
 const vibesRoutes = require('./routes/vibes');
 app.use('/api/vibes', vibesRoutes);
 
+const usersRoutes = require('./routes/users');
+app.use('/api/users', usersRoutes);
+
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {

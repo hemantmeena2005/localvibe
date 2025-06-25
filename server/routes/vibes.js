@@ -102,6 +102,10 @@ router.delete('/:id', auth, async (req, res) => {
     const vibe = await Vibe.findById(req.params.id);
     if (!vibe) return res.status(404).json({ message: 'Vibe not found' });
     if (vibe.creator.toString() !== req.user.id) return res.status(403).json({ message: 'Not authorized' });
+    // Remove vibe from creator's createdVibes
+    await User.findByIdAndUpdate(vibe.creator, { $pull: { createdVibes: vibe._id } });
+    // Remove vibe from all users' rsvpedVibes
+    await User.updateMany({ rsvpedVibes: vibe._id }, { $pull: { rsvpedVibes: vibe._id } });
     await vibe.deleteOne();
     res.json({ message: 'Vibe deleted' });
   } catch (err) {
