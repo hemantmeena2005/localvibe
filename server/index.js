@@ -7,7 +7,12 @@ const { Server } = require('socket.io');
 const ChatMessage = require('./models/ChatMessage');
 
 const app = express();
-app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+app.use(cors({ 
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://your-frontend-domain.vercel.app', 'https://your-frontend-domain.com']
+    : 'http://localhost:3000', 
+  credentials: true 
+}));
 app.use(express.json());
 
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -28,7 +33,9 @@ app.use('/api/users', usersRoutes);
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:3000',
+    origin: process.env.NODE_ENV === 'production' 
+      ? ['https://your-frontend-domain.vercel.app', 'https://your-frontend-domain.com']
+      : 'http://localhost:3000',
     methods: ['GET', 'POST']
   }
 });
